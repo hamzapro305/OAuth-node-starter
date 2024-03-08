@@ -7,7 +7,6 @@
         "build": "npx tsc",
         "start": "node dist/app.js",
         "dev": "nodemon src/app.ts",
-
         "build:dev": "yarn build && webpack --config webpack.dev.js --mode development"
     },
     "dependencies": {
