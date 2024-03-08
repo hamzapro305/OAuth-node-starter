@@ -20,5 +20,16 @@ class AuthServices {
             );
         }
     }
+    public readonly SignUp=async()=> {
+        try {
+            const users = await this.authRepository.getUser();
+            return users;
+        } catch (error: any) {
+            throw new CustomError(
+                (error?.message as string) || "Internal Server Error",
+                error?.httpCode || HttpStatusCode.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
 }
 export default AuthServices;

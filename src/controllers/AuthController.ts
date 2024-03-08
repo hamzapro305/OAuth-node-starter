@@ -16,5 +16,13 @@ class AuthController {
             next(error);
         }
     }
+    public readonly signup=async(req: Request, res: Response, next: NextFunction)=> {
+        try {
+            const users = await this.authServices.SignUp();
+            res.status(200).json(users);
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 export default AuthController;

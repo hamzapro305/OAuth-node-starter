@@ -1,5 +1,4 @@
 import { singleton } from "tsyringe";
-import { initializeApp } from "firebase/app";
 import {
     getFirestore,
     collection,
@@ -18,10 +17,10 @@ class AuthRepository {
     }
     public readonly getUser=async()=> {
         try {
-            // const citiesCol = collection(this.db, "cities");
-            // const citySnapshot = await getDocs(citiesCol);
-            // const cityList = citySnapshot.docs.map((doc) => doc.data());
-            return "Yaha hoon bhen chod";
+            const usersCol = collection(this.db, "user");
+            const userSnapshot = await getDocs(usersCol);
+            const userList = userSnapshot.docs.map((doc) => doc.data());
+            return userList
         } catch (error: any) {
             throw new CustomError(
                 (error?.message as string) || "Internal Server Error",

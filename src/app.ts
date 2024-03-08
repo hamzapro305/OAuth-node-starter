@@ -1,13 +1,13 @@
 import "reflect-metadata";
 
 import dotenv from "dotenv";
+dotenv.config();
 import Middlewares from "./middlewares/Middlewares";
 import ErrorMiddleware from "./middlewares/ErrorMiddleware";
 import { TestRouter } from "./routers/TestRouter";
 import { AuthRouter } from "./routers/AuthRouter";
 
-dotenv.config();
-const PORT = 8000;
+const PORT = 3000;
 
 // Middlewares
 const app = Middlewares();
