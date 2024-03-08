@@ -10,7 +10,7 @@
         "build:dev": "yarn build && webpack --config webpack.dev.js --mode development"
     },
     "engines": {
-        "node": "^20.10.9"
+        "node": ">=20.10.0"
     },
     "dependencies": {
         "@types/passport": "^1.0.16",
