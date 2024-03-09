@@ -1,5 +1,6 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import { Strategy as LocalStrategy } from "passport-local";
 import { inject, singleton } from "tsyringe";
 import AuthServices from "../services/AuthServices";
 // import User from "../models/user-model";
@@ -12,17 +13,23 @@ export default class PassportConfig {
         private authServices: AuthServices
     ) {
         try {
-            passport.serializeUser(function(user:any, cb) {
-                process.nextTick(function() {
-                  cb(null, { id: user.id, name: user.name,email:user.email });
+            passport.serializeUser(function (user: any, cb) {
+                process.nextTick(function () {
+                    cb(null, {
+                        id: user.id,
+                        name: user.name,
+                        email: user.email,
+                    });
                 });
-              });
-              
-              passport.deserializeUser(function(user:any, cb) {
-                process.nextTick(function() {
-                  return cb(null, user);
+            });
+
+            passport.deserializeUser(function (user: any, cb) {
+                process.nextTick(function () {
+                    return cb(null, user);
                 });
-              });
+            });
+
+            // Google Strategy
             passport.use(
                 new GoogleStrategy(
                     {
@@ -33,14 +40,32 @@ export default class PassportConfig {
                     },
                     async (accessToken, refreshToken, profile, done) => {
                         console.log(profile);
-                        const user = await this.authServices.authenticateStrategy({
-                            id: profile.id,
-                            email: profile._json.email as string,
-                            name: profile._json.name as string,
-                            profilePic: profile._json.picture as string,
-                            strategy: "GOOGLE",
-                        });
+                        const user =
+                            await this.authServices.authenticateStrategy({
+                                id: profile.id,
+                                email: profile._json.email as string,
+                                name: profile._json.name as string,
+                                profilePic: profile._json.picture as string,
+                                strategy: "GOOGLE",
+                            });
                         done(null, user);
+                    }
+                )
+            );
+            // Local Strategy
+            passport.use(
+                new LocalStrategy(
+                    {
+                        usernameField: "email",
+                    },
+                    async (email, password, done) => {
+                        const user = await this.authServices.login(
+                            {
+                                email,
+                                password,
+                            },
+                            done
+                        );
                     }
                 )
             );

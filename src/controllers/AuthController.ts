@@ -6,23 +6,33 @@ import { NextFunction, Request, Response } from "express";
 class AuthController {
     constructor(
         @inject(AuthServices)
-        private authServices: AuthServices,
+        private authServices: AuthServices
     ) {}
-    public readonly getUser=async(req: Request, res: Response, next: NextFunction)=> {
+    public readonly getUser = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ) => {
         try {
             const users = await this.authServices.getUser();
             res.status(200).json(users);
         } catch (error) {
             next(error);
         }
-    }
-    public readonly signup=async(req: Request, res: Response, next: NextFunction)=> {
+    };
+    public readonly signup = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ) => {
         try {
-            const users = await this.authServices.SignUp();
-            res.status(200).json(users);
+            const { email, password } = req.body;
+
+            await this.authServices.signUp({ email, password });
+            res.status(200).send("User Successfully Added...");
         } catch (error) {
             next(error);
         }
-    }
+    };
 }
 export default AuthController;
