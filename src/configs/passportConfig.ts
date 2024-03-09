@@ -23,7 +23,6 @@ export default class PassportConfig {
                   return cb(null, user);
                 });
               });
-            console.log(process.env.googleClientID);
             passport.use(
                 new GoogleStrategy(
                     {
@@ -33,9 +32,8 @@ export default class PassportConfig {
                         callbackURL: "/auth/google/redirect",
                     },
                     async (accessToken, refreshToken, profile, done) => {
-                        console.log("herere");
                         console.log(profile);
-                        const user = await authServices.authenticateStrategy({
+                        const user = await this.authServices.authenticateStrategy({
                             id: profile.id,
                             email: profile._json.email as string,
                             name: profile._json.name as string,

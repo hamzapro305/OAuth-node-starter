@@ -11,6 +11,10 @@ class AuthServices {
     ) {}
     public readonly authenticateStrategy = async ({id,email,name,profilePic,strategy}:{id:string,email:string,name:string,profilePic:string,strategy:"GOOGLE"|"FACEBOOK"}) => {
         try {
+            const existingUser=await this.authRepository.getUserByEmail(email);
+            if (existingUser) {
+                return existingUser;
+            }
             const user = await this.authRepository.createGoogleUser({email,googleID:id,name,profilePic});
             return user;
         } catch (error: any) {
@@ -22,7 +26,7 @@ class AuthServices {
     };
     public readonly getUser = async () => {
         try {
-            const users = await this.authRepository.getUser();
+            const users = await this.authRepository.getUserByEmail("Jake@gmail.com");
             return users;
         } catch (error: any) {
             throw new CustomError(

@@ -5,6 +5,8 @@ import {
     getDocs,
     Firestore,
     addDoc,
+    query,
+    where,
 } from "firebase/firestore/lite";
 import { firebaseApp } from "../configs/firebaseConfig";
 import { CustomError } from "../exception/CustomError";
@@ -30,6 +32,26 @@ class AuthRepository {
             );
         }
     }
+    public async getUserByEmail(email: string) {
+        try {
+          const usersCol = collection(this.db, "user");
+          // Query for the user with the specified email
+          const querySnapshot = await getDocs(query(usersCol, where("email", "==", email)));
+          // Check if any user matches the query
+          if (querySnapshot.size > 0) {
+            // Return the first matching user (assuming unique emails)
+            return querySnapshot.docs[0].data();
+          } else {
+            // No user found with the specified email
+            return null;
+          }
+        } catch (error: any) {
+          throw new CustomError(
+            (error?.message as string) || "Internal Server Error",
+            error?.httpCode || HttpStatusCode.INTERNAL_SERVER_ERROR
+          );
+        }
+      }
     public readonly getUser=async()=> {
         try {
             const usersCol = collection(this.db, "user");
