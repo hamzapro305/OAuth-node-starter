@@ -13,11 +13,9 @@
         "node": ">=20.10.0"
     },
     "dependencies": {
-        "@types/connect-sqlite3": "^0.9.5",
         "@types/express-session": "^1.18.0",
         "@types/passport": "^1.0.16",
         "@types/passport-google-oauth20": "^2.0.14",
-        "connect-sqlite3": "^0.9.13",
         "cors": "^2.8.5",
         "express": "^4.18.2",
         "express-session": "^1.18.0",
