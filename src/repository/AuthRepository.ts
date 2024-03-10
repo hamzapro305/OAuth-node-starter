@@ -73,7 +73,7 @@ class AuthRepository {
     }: {
         email: string;
         password: string;
-    }){
+    }) {
         try {
             const usersCol = collection(this.db, "user");
             await addDoc(usersCol, { email, password });

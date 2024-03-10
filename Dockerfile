@@ -24,6 +24,7 @@ WORKDIR /home/app
 
 # Copy bundle from the 'builder' stage
 COPY --from=builder /home/app/dist/dev-build/app-bundle.js .
+COPY ./.env ./
 
 EXPOSE 8000
 

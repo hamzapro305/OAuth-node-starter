@@ -51,8 +51,8 @@ export default class PassportConfig {
             new GoogleStrategy(
                 {
                     // options for google strategy
-                    clientID: process.env.googleClientID as string,
-                    clientSecret: process.env.googleClientSecret as string,
+                    clientID: process.env.GOOGLE_CLIENT_ID as string,
+                    clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
                     callbackURL: "/auth/google/redirect",
                 },
                 async (accessToken, refreshToken, profile, done) => {
