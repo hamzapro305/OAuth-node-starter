@@ -2,7 +2,6 @@
     "name": "starter",
     "version": "1.0.0",
     "description": "",
-    "main": "index.js",
     "scripts": {
         "build": "npx tsc",
         "start": "node dist/app.js",
@@ -10,7 +9,7 @@
         "build:dev": "yarn build && webpack --config webpack.dev.js --mode development"
     },
     "engines": {
-        "node": "^20.10.0"
+        "node": ">=20.10.0"
     },
     "dependencies": {
         "cors": "^2.8.5",
