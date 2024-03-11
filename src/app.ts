@@ -1,6 +1,7 @@
 import "reflect-metadata";
 
 import dotenv from "dotenv";
+dotenv.config();
 import Middlewares from "./middlewares/Middlewares";
 import ErrorMiddleware from "./middlewares/ErrorMiddleware";
 import { TestRouter } from "./routers/TestRouter";
@@ -11,7 +12,6 @@ import { container } from "tsyringe";
 import PassportConfig from "./configs/passportConfig";
 
 const PORT = 8000;
-dotenv.config();
 
 // Middlewares
 const app = Middlewares();
