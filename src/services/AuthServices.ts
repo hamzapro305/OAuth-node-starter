@@ -25,11 +25,15 @@ class AuthServices {
         strategy: "GOOGLE" | "FACEBOOK";
     }) => {
         try {
-            // Todo link different strategies
+            // login karte waqt yeh dekho k user ka strategy id exist krta ya nhi if user exists
             const existingUser = await this.authRepository.getUserByEmail(
                 email
             );
+            console.log(existingUser)
             if (existingUser) {
+                // if (!existingUser.googleID) {
+                //     // If user is not connected with google, connect him to google
+                // }
                 return existingUser;
             }
             const user = await this.authRepository.createGoogleUser({
@@ -67,6 +71,7 @@ class AuthServices {
         password: string;
     }) => {
         try {
+            // SIgnup krte waqt yeh dekho k user ka koi strategy id exist krta already tou ussi se connect krdo
             const existingUser = await this.authRepository.getUserByEmail(
                 email
             );

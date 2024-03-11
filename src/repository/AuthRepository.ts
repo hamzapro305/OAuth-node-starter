@@ -7,6 +7,8 @@ import {
     addDoc,
     query,
     where,
+    updateDoc,
+    doc,
 } from "firebase/firestore/lite";
 import { firebaseApp } from "../configs/firebaseConfig";
 import { CustomError } from "../exception/CustomError";
@@ -30,6 +32,37 @@ class AuthRepository {
         profilePic: string;
     }) => {
         try {
+            const user = await addDoc(collection(this.db, "user"), {
+                email,
+                name,
+                googleID,
+                profilePic,
+            });
+            return user;
+        } catch (error: any) {
+            throw new CustomError(
+                (error?.message as string) || "Internal Server Error",
+                error?.httpCode || HttpStatusCode.INTERNAL_SERVER_ERROR
+            );
+        }
+    };
+    public readonly connectToGoogle = async ({
+        googleID,
+        email,
+        name,
+        profilePic,
+    }: {
+        googleID: string;
+        email: string;
+        name: string;
+        profilePic: string;
+    }) => {
+        try {
+            
+            // await updateDoc(doc(this.db, "user", doc.id), {
+            //     foo: 'bar'
+            //   });
+
             const user = await addDoc(collection(this.db, "user"), {
                 email,
                 name,
