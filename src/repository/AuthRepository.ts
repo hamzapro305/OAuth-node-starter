@@ -32,15 +32,10 @@ class AuthRepository {
         profilePic: string;
     }) => {
         try {
-            const user=this.db.collection("users").add({email,name,profilePic,googleID})
-            // const user = await this.db.collection("users").doc("OBMIuG0qBdo0rMNPs7Am").update({email,name,profilePic})
-            
-            // const user = await addDoc(collection(this.db, "user"), {
-            //     email,
-            //     name,
-            //     googleID,
-            //     profilePic,
-            // });
+            const user = this.db
+                .collection("users")
+                .add({ email, name, profilePic, googleID });
+
             return user;
         } catch (error: any) {
             throw new CustomError(
@@ -51,22 +46,21 @@ class AuthRepository {
     };
     public readonly connectToGoogle = async ({
         googleID,
-        email,
+        documentId,
         name,
         profilePic,
     }: {
         googleID: string;
-        email: string;
+        documentId: string;
         name: string;
         profilePic: string;
     }) => {
         try {
-            // const user = await updateDoc(doc(this.db, "user", email), {
-            //     googleID,
-            //     name,
-            //     profilePic,
-            // });
-            return "user";
+            const user = await this.db
+                .collection("users")
+                .doc(documentId)
+                .update({ name, profilePic, googleID });
+            return user;
         } catch (error: any) {
             throw new CustomError(
                 (error?.message as string) || "Internal Server Error",
@@ -74,21 +68,16 @@ class AuthRepository {
             );
         }
     };
-    public async getUserByEmail(email: string) {
+    public async getUserByEmail(email: string):Promise<any> {
         try {
-            // const usersCol = collection(this.db, "user");
-            // // Query for the user with the specified email
-            // const querySnapshot = await getDocs(
-            //     query(usersCol, where("email", "==", email))
-            // );
-            // // Check if any user matches the query
-            // if (querySnapshot.size > 0) {
-            //     // Return the first matching user (assuming unique emails)
-            //     return querySnapshot.docs[0].data();
-            // } else {
-            //     // No user found with the specified email
-            //     return null;
-            // }
+            const docRef = this.db.collection("users").where("email", "==", email);
+            const docSnapshot = await docRef.get();
+            if (docSnapshot.empty) {
+                // Handle case where no user found with the email
+                return null;
+            }
+            console.log("+++++++++++++snapshot++++++++++++++++",{...docSnapshot.docs[0].data(),id:docSnapshot.docs[0].id})
+            return {...docSnapshot.docs[0].data(),id:docSnapshot.docs[0].id};
         } catch (error: any) {
             throw new CustomError(
                 (error?.message as string) || "Internal Server Error",
@@ -105,9 +94,11 @@ class AuthRepository {
         password: string;
     }) {
         try {
-            // const usersCol = collection(this.db, "user");
-            // await addDoc(usersCol, { email, password });
-            return;
+            const doc = await this.db
+                .collection("users")
+                .add({ email, password });
+            console.log("Document created with ID:", doc);
+            return doc;
         } catch (error: any) {
             throw new CustomError(
                 (error?.message as string) || "Internal Server Error",
