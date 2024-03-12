@@ -1,30 +1,18 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import admin from "firebase-admin"
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const {
-	FIREBASE_API_KEY,
-	FIREBASE_AUTH_DOMAIN,
-	FIREBASE_PROJECT_ID,
-	FIREBASE_STORAGE_BUCKET,
-	FIREBASE_MASSAGING_SENDER_ID,
-	FIREBASE_APP_ID,
-	FIREBASE_MEASUREMENT_ID
-} = process.env
+import * as serviceAccount from '../utils/FirebaseServiceAccountInfo.json';
 
-const firebaseConfig = {
-	apiKey: FIREBASE_API_KEY,
-	authDomain: FIREBASE_AUTH_DOMAIN,
-	projectId: FIREBASE_PROJECT_ID,
-	storageBucket: FIREBASE_STORAGE_BUCKET,
-	messagingSenderId: FIREBASE_MASSAGING_SENDER_ID,
-	appId: FIREBASE_APP_ID,
-	measurementId: FIREBASE_MEASUREMENT_ID
-};
 
-// Initialize Firebase
-export const firebaseApp = initializeApp(firebaseConfig);
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+    storageBucket: "gs://soundcloud-clone-3cbce.appspot.com" // Replace with your Firebase Storage bucket URL
+});
+
+const storage = admin.storage();
+const firebaseDB= admin.firestore(admin.app())
+
+export {
+    storage,
+    admin,
+	firebaseDB
+}

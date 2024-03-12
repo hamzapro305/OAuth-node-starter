@@ -26,16 +26,18 @@ class AuthServices {
     }) => {
         try {
             // login karte waqt yeh dekho k user ka strategy id exist krta ya nhi if user exists
-            const existingUser = await this.authRepository.getUserByEmail(
-                email
-            );
-            console.log(existingUser)
-            if (existingUser) {
-                // if (!existingUser.googleID) {
-                //     // If user is not connected with google, connect him to google
-                // }
-                return existingUser;
-            }
+            // const existingUser = await this.authRepository.getUserByEmail(
+            //     email
+            // );
+            // console.log(existingUser)
+            // if (existingUser) {
+            //     console.log("==========================",existingUser,existingUser.id)
+            //     if (!existingUser.googleID) {
+            //         // If user is not connected with google, connect him to google
+            //         await this.authRepository.connectToGoogle({email,googleID:id,name,profilePic})
+            //     }
+            //     return existingUser;
+            // }
             const user = await this.authRepository.createGoogleUser({
                 email,
                 googleID: id,
@@ -72,24 +74,24 @@ class AuthServices {
     }) => {
         try {
             // SIgnup krte waqt yeh dekho k user ka koi strategy id exist krta already tou ussi se connect krdo
-            const existingUser = await this.authRepository.getUserByEmail(
-                email
-            );
-            const salt = bcrypt.genSaltSync(10);
-            const hashedPwd = bcrypt.hashSync(password, salt);
+            // const existingUser = await this.authRepository.getUserByEmail(
+            //     email
+            // );
+            // const salt = bcrypt.genSaltSync(10);
+            // const hashedPwd = bcrypt.hashSync(password, salt);
 
-            if (existingUser) {
-                throw new CustomError(
-                    "User Already Exists",
-                    HttpStatusCode.CONFLICT
-                );
-            }
+            // if (existingUser) {
+            //     throw new CustomError(
+            //         "User Already Exists",
+            //         HttpStatusCode.CONFLICT
+            //     );
+            // }
 
-            const user = await this.authRepository.createUser({
-                email,
-                password: hashedPwd,
-            });
-            return user;
+            // const user = await this.authRepository.createUser({
+            //     email,
+            //     password: hashedPwd,
+            // });
+            // return user;
         } catch (error: any) {
             throw new CustomError(
                 (error?.message as string) || "Internal Server Error",
@@ -114,22 +116,22 @@ class AuthServices {
         try {
             const user = await this.authRepository.getUserByEmail(email);
 
-            if (!user) {
-                return done(
-                    new CustomError("User Not Found", HttpStatusCode.NOT_FOUND),
-                    false
-                );
-            }
-            if (!bcrypt.compareSync(password, user.password)) {
-                return done(
-                    new CustomError(
-                        "Password incorrect",
-                        HttpStatusCode.BAD_REQUEST
-                    ),
-                    false
-                );
-            }
-            return done(null, user);
+            // if (!user) {
+            //     return done(
+            //         new CustomError("User Not Found", HttpStatusCode.NOT_FOUND),
+            //         false
+            //     );
+            // }
+            // if (!bcrypt.compareSync(password, user.password)) {
+            //     return done(
+            //         new CustomError(
+            //             "Password incorrect",
+            //             HttpStatusCode.BAD_REQUEST
+            //         ),
+            //         false
+            //     );
+            // }
+            // return done(null, user);
         } catch (error: any) {
             throw new CustomError(
                 (error?.message as string) || "Internal Server Error",

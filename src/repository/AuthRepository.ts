@@ -10,15 +10,15 @@ import {
     updateDoc,
     doc,
 } from "firebase/firestore/lite";
-import { firebaseApp } from "../configs/firebaseConfig";
+import { firebaseDB } from "../configs/firebaseConfig";
 import { CustomError } from "../exception/CustomError";
 import HttpStatusCode from "../utils/HttpStatusCode";
 
 @singleton()
 class AuthRepository {
-    private db: Firestore;
+    private db: typeof firebaseDB;
     constructor() {
-        this.db = getFirestore(firebaseApp);
+        this.db = firebaseDB;
     }
     public readonly createGoogleUser = async ({
         googleID,
@@ -32,12 +32,15 @@ class AuthRepository {
         profilePic: string;
     }) => {
         try {
-            const user = await addDoc(collection(this.db, "user"), {
-                email,
-                name,
-                googleID,
-                profilePic,
-            });
+            const user=this.db.collection("users").add({email,name,profilePic,googleID})
+            // const user = await this.db.collection("users").doc("OBMIuG0qBdo0rMNPs7Am").update({email,name,profilePic})
+            
+            // const user = await addDoc(collection(this.db, "user"), {
+            //     email,
+            //     name,
+            //     googleID,
+            //     profilePic,
+            // });
             return user;
         } catch (error: any) {
             throw new CustomError(
@@ -58,18 +61,12 @@ class AuthRepository {
         profilePic: string;
     }) => {
         try {
-            
-            // await updateDoc(doc(this.db, "user", doc.id), {
-            //     foo: 'bar'
-            //   });
-
-            const user = await addDoc(collection(this.db, "user"), {
-                email,
-                name,
-                googleID,
-                profilePic,
-            });
-            return user;
+            // const user = await updateDoc(doc(this.db, "user", email), {
+            //     googleID,
+            //     name,
+            //     profilePic,
+            // });
+            return "user";
         } catch (error: any) {
             throw new CustomError(
                 (error?.message as string) || "Internal Server Error",
@@ -79,19 +76,19 @@ class AuthRepository {
     };
     public async getUserByEmail(email: string) {
         try {
-            const usersCol = collection(this.db, "user");
-            // Query for the user with the specified email
-            const querySnapshot = await getDocs(
-                query(usersCol, where("email", "==", email))
-            );
-            // Check if any user matches the query
-            if (querySnapshot.size > 0) {
-                // Return the first matching user (assuming unique emails)
-                return querySnapshot.docs[0].data();
-            } else {
-                // No user found with the specified email
-                return null;
-            }
+            // const usersCol = collection(this.db, "user");
+            // // Query for the user with the specified email
+            // const querySnapshot = await getDocs(
+            //     query(usersCol, where("email", "==", email))
+            // );
+            // // Check if any user matches the query
+            // if (querySnapshot.size > 0) {
+            //     // Return the first matching user (assuming unique emails)
+            //     return querySnapshot.docs[0].data();
+            // } else {
+            //     // No user found with the specified email
+            //     return null;
+            // }
         } catch (error: any) {
             throw new CustomError(
                 (error?.message as string) || "Internal Server Error",
@@ -108,8 +105,8 @@ class AuthRepository {
         password: string;
     }) {
         try {
-            const usersCol = collection(this.db, "user");
-            await addDoc(usersCol, { email, password });
+            // const usersCol = collection(this.db, "user");
+            // await addDoc(usersCol, { email, password });
             return;
         } catch (error: any) {
             throw new CustomError(
@@ -121,10 +118,10 @@ class AuthRepository {
 
     public readonly getUser = async () => {
         try {
-            const usersCol = collection(this.db, "user");
-            const userSnapshot = await getDocs(usersCol);
-            const userList = userSnapshot.docs.map((doc) => doc.data());
-            return userList;
+            // const usersCol = collection(this.db, "user");
+            // const userSnapshot = await getDocs(usersCol);
+            // const userList = userSnapshot.docs.map((doc) => doc.data());
+            // return userList;
         } catch (error: any) {
             throw new CustomError(
                 (error?.message as string) || "Internal Server Error",
