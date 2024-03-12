@@ -1,5 +1,6 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import { Strategy as FacebookStrategy } from "passport-facebook";
 import { Strategy as LocalStrategy } from "passport-local";
 import { inject, singleton } from "tsyringe";
 import AuthServices from "../services/AuthServices";
@@ -23,6 +24,9 @@ export default class PassportConfig {
             this.configGoogleStrategy();
 
             // Facebook Strategy
+            this.configFacebookStrategy();
+
+            // Local Strategy
             this.configLocalStrategy();
         } catch (error) {
             console.log(error);
@@ -69,6 +73,26 @@ export default class PassportConfig {
             )
         );
     };
+    public readonly configFacebookStrategy=()=>{
+        passport.use(new FacebookStrategy({
+            clientID: process.env.FACEBOOK_APP_ID as string,
+            clientSecret: process.env.FACEBOOK_APP_SECRET as string,
+            callbackURL: "http://localhost:8000/auth/facebook/redirect",
+            profileFields: ['id', 'displayName', 'photos', 'email']
+          },
+          async (accessToken, refreshToken, profile:any, done:any) => {
+              console.log(profile);
+            //   const user = await this.authServices.authenticateStrategy({
+            //       id: profile.id,
+            //       email: profile._json.email as string,
+            //       name: profile._json.name as string,
+            //       profilePic: profile._json.picture as string,
+            //       strategy: "FACEBOOK",
+            //   });
+              done(null,profile);
+          }
+        ));
+    }
     public readonly configLocalStrategy = () => {
         passport.use(
             new LocalStrategy(

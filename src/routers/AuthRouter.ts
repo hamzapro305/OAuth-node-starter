@@ -12,7 +12,7 @@ AuthRouter.post(
     "/login",
     passport.authenticate("local", { failureRedirect: "/login" }),
     function (req, res) {
-        res.redirect("/local/redirect");
+        res.redirect("/auth/local/redirect");
     }
 );
 AuthRouter.get(
@@ -21,6 +21,9 @@ AuthRouter.get(
         scope: ["email", "profile"],
     })
 );
+AuthRouter.get(
+    "/facebook",
+    passport.authenticate('facebook'));
 
 // Handle Callback from Google Authentication
 AuthRouter.get(
@@ -28,6 +31,21 @@ AuthRouter.get(
     passport.authenticate("google"),
     (req, res) => {
         res.send("you reached the redirect URI");
+    }
+);
+// Handle Callback from Facebook Authentication
+AuthRouter.get(
+    "/facebook/redirect",
+    passport.authenticate("facebook"),
+    (req, res) => {
+        res.send("you reached the redirect URI");
+    }
+);
+// Handle Callback from Local Authentication
+AuthRouter.post(
+    "/local/redirect",
+    (req, res) => {
+        res.send("you reached the local redirect URI");
     }
 );
 

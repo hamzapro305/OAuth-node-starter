@@ -25,29 +25,63 @@ class AuthServices {
         strategy: "GOOGLE" | "FACEBOOK";
     }) => {
         try {
-            // login karte waqt yeh dekho k user ka strategy id exist krta ya nhi if user exists
+            // login karte waqt yeh dekho k user ka strategy account exist krta ya nhi if user exists
             const existingUser = await this.authRepository.getUserByEmail(
                 email
             );
             if (existingUser) {
-                if (!existingUser.googleID) {
-                    // If user is not connected with google, connect him to google
-                    await this.authRepository.connectToGoogle({
-                        documentId: existingUser.id,
+                switch (strategy) {
+                    case "GOOGLE":
+                        if (!existingUser.googleID) {
+                            // If user is not connected with google, connect him to google
+                            await this.authRepository.connectToGoogle({
+                                documentId: existingUser.id,
+                                googleID: id,
+                                name,
+                                profilePic,
+                            });
+                        }
+                        break;
+                    case "FACEBOOK":
+                        if (!existingUser.facebookID) {
+                            // If user is not connected with facebook, connect him to facebook
+                            await this.authRepository.connectToFacebook({
+                                documentId: existingUser.id,
+                                facebookID: id,
+                                name,
+                                profilePic,
+                            });
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+                return existingUser;
+            }
+            let newUser;
+            switch (strategy) {
+                case "GOOGLE":
+                    newUser = await this.authRepository.createGoogleUser({
+                        email,
                         googleID: id,
                         name,
                         profilePic,
                     });
-                }
-                return existingUser;
+                    break;
+                case "FACEBOOK":
+                    newUser = await this.authRepository.createGoogleUser({
+                        email,
+                        googleID: id,
+                        name,
+                        profilePic,
+                    });
+                    break;
+
+                default:
+                    break;
             }
-            const user = await this.authRepository.createGoogleUser({
-                email,
-                googleID: id,
-                name,
-                profilePic,
-            });
-            return user;
+            return newUser;
         } catch (error: any) {
             throw new CustomError(
                 (error?.message as string) || "Internal Server Error",
@@ -124,7 +158,10 @@ class AuthServices {
             }
             if (!user.password) {
                 return done(
-                    new CustomError("You didn't signed up using email...", HttpStatusCode.BAD_REQUEST),
+                    new CustomError(
+                        "You didn't signed up using email...",
+                        HttpStatusCode.BAD_REQUEST
+                    ),
                     false
                 );
             }
