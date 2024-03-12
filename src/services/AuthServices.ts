@@ -56,19 +56,6 @@ class AuthServices {
             );
         }
     };
-    public readonly getUser = async () => {
-        try {
-            const users = await this.authRepository.getUserByEmail(
-                "Jake@gmail.com"
-            );
-            return users;
-        } catch (error: any) {
-            throw new CustomError(
-                (error?.message as string) || "Internal Server Error",
-                error?.httpCode || HttpStatusCode.INTERNAL_SERVER_ERROR
-            );
-        }
-    };
     public readonly signUp = async ({
         email,
         password,
@@ -84,18 +71,28 @@ class AuthServices {
             const salt = bcrypt.genSaltSync(10);
             const hashedPwd = bcrypt.hashSync(password, salt);
 
-            if (existingUser) {
-                throw new CustomError(
-                    "User Already Exists",
-                    HttpStatusCode.CONFLICT
-                );
+            if (!existingUser) {
+                // If user does not exist make then simply create a new user using local signup
+                await this.authRepository.createUser({
+                    email,
+                    password: hashedPwd,
+                });
+                return "User Successfully Added...";
             }
 
-            const user = await this.authRepository.createUser({
-                email,
-                password: hashedPwd,
-            });
-            return user;
+            if (existingUser.googleID || existingUser.facebookID) {
+                // If User has previously signed up using a strategy then connect that to his local account.
+                await this.authRepository.connectLocalAccount({
+                    documentId: existingUser.id,
+                    password: hashedPwd,
+                });
+                return "Connected to strategy account.";
+            }
+
+            throw new CustomError(
+                "User Already Exists",
+                HttpStatusCode.CONFLICT
+            );
         } catch (error: any) {
             throw new CustomError(
                 (error?.message as string) || "Internal Server Error",
@@ -123,6 +120,12 @@ class AuthServices {
             if (!user) {
                 return done(
                     new CustomError("User Not Found", HttpStatusCode.NOT_FOUND),
+                    false
+                );
+            }
+            if (!user.password) {
+                return done(
+                    new CustomError("You didn't signed up using email...", HttpStatusCode.BAD_REQUEST),
                     false
                 );
             }

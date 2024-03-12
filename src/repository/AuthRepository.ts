@@ -1,15 +1,4 @@
 import { singleton } from "tsyringe";
-import {
-    getFirestore,
-    collection,
-    getDocs,
-    Firestore,
-    addDoc,
-    query,
-    where,
-    updateDoc,
-    doc,
-} from "firebase/firestore/lite";
 import { firebaseDB } from "../configs/firebaseConfig";
 import { CustomError } from "../exception/CustomError";
 import HttpStatusCode from "../utils/HttpStatusCode";
@@ -60,6 +49,26 @@ class AuthRepository {
                 .collection("users")
                 .doc(documentId)
                 .update({ name, profilePic, googleID });
+            return user;
+        } catch (error: any) {
+            throw new CustomError(
+                (error?.message as string) || "Internal Server Error",
+                error?.httpCode || HttpStatusCode.INTERNAL_SERVER_ERROR
+            );
+        }
+    };
+    public readonly connectLocalAccount = async ({
+        documentId,
+        password,
+    }: {
+        documentId: string;
+        password: string;
+    }) => {
+        try {
+            const user = await this.db
+                .collection("users")
+                .doc(documentId)
+                .update({ password });
             return user;
         } catch (error: any) {
             throw new CustomError(

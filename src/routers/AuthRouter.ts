@@ -7,7 +7,6 @@ const AuthRouter = Router();
 
 const authController = container.resolve(AuthController);
 
-AuthRouter.post("/get-users", authController.getUser);
 AuthRouter.post("/signup", authController.signup);
 AuthRouter.post(
     "/login",

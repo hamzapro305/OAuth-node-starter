@@ -1,7 +1,0 @@
-
-{
-    auth:{
-        google,
-        facebook
-    }
-}
