@@ -29,7 +29,6 @@ class AuthServices {
             const existingUser = await this.authRepository.getUserByEmail(
                 email
             );
-            console.log(existingUser);
             if (existingUser) {
                 if (!existingUser.googleID) {
                     // If user is not connected with google, connect him to google

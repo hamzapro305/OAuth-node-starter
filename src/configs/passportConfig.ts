@@ -56,7 +56,7 @@ export default class PassportConfig {
                     callbackURL: "/auth/google/redirect",
                 },
                 async (accessToken, refreshToken, profile, done) => {
-                    console.log(profile);
+                    // console.log(profile);
                     const user = await this.authServices.authenticateStrategy({
                         id: profile.id,
                         email: profile._json.email as string,

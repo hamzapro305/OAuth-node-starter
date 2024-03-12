@@ -85,7 +85,6 @@ class AuthRepository {
                 // Handle case where no user found with the email
                 return null;
             }
-            console.log("+++++++++++++snapshot++++++++++++++++",{...docSnapshot.docs[0].data(),id:docSnapshot.docs[0].id})
             return {...docSnapshot.docs[0].data(),id:docSnapshot.docs[0].id};
         } catch (error: any) {
             throw new CustomError(
@@ -106,7 +105,6 @@ class AuthRepository {
             const doc = await this.db
                 .collection("users")
                 .add({ email, password });
-            console.log("Document created with ID:", doc);
             return doc;
         } catch (error: any) {
             throw new CustomError(
