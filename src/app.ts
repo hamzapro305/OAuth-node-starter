@@ -29,6 +29,7 @@ app.use("/auth/", AuthRouter);
 // Handle Error After Controller
 app.use(ErrorMiddleware);
 
+
 // Run application
 app.listen(PORT, () => {
     console.log("listening to port ", PORT);
