@@ -16,11 +16,15 @@ class AuthServices {
         email,
         name,
         strategy,
+        accessToken,
+        refreshToken,
     }: {
         id: string;
         email: string;
         name: string;
         strategy: "GOOGLE" | "FACEBOOK";
+        accessToken: string;
+        refreshToken: string;
     }) => {
         try {
             // login karte waqt yeh dekho k user ka strategy account exist krta ya nhi if user exists
@@ -35,7 +39,9 @@ class AuthServices {
                             await this.authRepository.connectToGoogle({
                                 documentId: existingUser.id,
                                 googleId: id,
-                                strategies:existingUser.strategies,
+                                strategies: existingUser.strategies,
+                                accessToken,
+                                refreshToken
                             });
                         }
                         break;
@@ -45,7 +51,9 @@ class AuthServices {
                             await this.authRepository.connectToFacebook({
                                 documentId: existingUser.id,
                                 facebookID: id,
-                                strategies:existingUser.strategies,
+                                strategies: existingUser.strategies,
+                                accessToken,
+                                refreshToken
                             });
                         }
                         break;
@@ -62,6 +70,8 @@ class AuthServices {
                         email,
                         googleID: id,
                         name,
+                        accessToken,
+                        refreshToken
                     });
                     break;
                 case "FACEBOOK":
@@ -69,6 +79,8 @@ class AuthServices {
                         email,
                         facebookID: id,
                         name,
+                        accessToken,
+                        refreshToken
                     });
                     break;
 

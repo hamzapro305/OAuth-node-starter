@@ -13,10 +13,14 @@ class AuthRepository {
         googleID,
         email,
         name,
+        accessToken,
+        refreshToken
     }: {
         googleID: string;
         email: string;
         name: string;
+        accessToken: string;
+        refreshToken?: string;
     }) => {
         try {
             const user = this.db.collection("users").add({
@@ -25,6 +29,8 @@ class AuthRepository {
                 strategies: {
                     google: {
                         id: googleID,
+                        accessToken,
+                        refreshToken: refreshToken?refreshToken:null,
                     },
                 },
             });
@@ -41,10 +47,14 @@ class AuthRepository {
         facebookID,
         email,
         name,
+        accessToken,
+        refreshToken
     }: {
         facebookID: string;
         email: string;
         name: string;
+        accessToken: string;
+        refreshToken?: string;
     }) => {
         try {
             const user = this.db.collection("users").add({
@@ -53,6 +63,8 @@ class AuthRepository {
                 strategies: {
                     facebook: {
                         id: facebookID,
+                        accessToken,
+                        refreshToken: refreshToken?refreshToken:null,
                     },
                 },
             });
@@ -69,10 +81,14 @@ class AuthRepository {
         googleId,
         documentId,
         strategies,
+        accessToken,
+        refreshToken,
     }: {
         googleId: string;
         documentId: string;
         strategies: any;
+        accessToken: string;
+        refreshToken?: string;
     }) => {
         try {
             const user = await this.db
@@ -83,6 +99,8 @@ class AuthRepository {
                         ...strategies,
                         google: {
                             id: googleId,
+                            accessToken,
+                            refreshToken: refreshToken?refreshToken:null,
                         },
                     },
                 });
@@ -97,12 +115,15 @@ class AuthRepository {
     public readonly connectToFacebook = async ({
         facebookID,
         documentId,
-        strategies
+        strategies,
+        accessToken,
+        refreshToken,
     }: {
         facebookID: string;
         documentId: string;
         strategies: any;
-
+        accessToken: string;
+        refreshToken?: string;
     }) => {
         try {
             const user = await this.db
@@ -113,6 +134,8 @@ class AuthRepository {
                         ...strategies,
                         facebook: {
                             id: facebookID,
+                            accessToken,
+                            refreshToken: refreshToken?refreshToken:null,
                         },
                     },
                 });
@@ -182,7 +205,7 @@ class AuthRepository {
         try {
             const doc = await this.db
                 .collection("users")
-                .add({ email,name, local: { password } });
+                .add({ email, name, local: { password } });
             return doc;
         } catch (error: any) {
             throw new CustomError(

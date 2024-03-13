@@ -60,38 +60,45 @@ export default class PassportConfig {
                     callbackURL: "/auth/google/redirect",
                 },
                 async (accessToken, refreshToken, profile, done) => {
-                    // console.log(profile);
+                    console.log(profile);
                     const user = await this.authServices.authenticateStrategy({
                         id: profile.id,
                         email: profile._json.email as string,
                         name: profile._json.name as string,
                         strategy: "GOOGLE",
+                        accessToken,
+                        refreshToken,
                     });
                     done(null, user);
                 }
             )
         );
     };
-    public readonly configFacebookStrategy=()=>{
-        passport.use(new FacebookStrategy({
-            clientID: process.env.FACEBOOK_APP_ID as string,
-            clientSecret: process.env.FACEBOOK_APP_SECRET as string,
-            callbackURL: "http://localhost:8000/auth/facebook/redirect",
-            profileFields: ['id', 'displayName', 'photos', 'email'],
-            scope:["email"]
-          },
-          async (accessToken, refreshToken, profile, done:any) => {
-              console.log(profile);
-              const user = await this.authServices.authenticateStrategy({
-                  id: profile.id,
-                  email: profile._json.email as string,
-                  name: profile._json.name as string,
-                  strategy: "FACEBOOK",
-              });
-              done(null,profile);
-          }
-        ));
-    }
+    public readonly configFacebookStrategy = () => {
+        passport.use(
+            new FacebookStrategy(
+                {
+                    clientID: process.env.FACEBOOK_APP_ID as string,
+                    clientSecret: process.env.FACEBOOK_APP_SECRET as string,
+                    callbackURL: "http://localhost:8000/auth/facebook/redirect",
+                    profileFields: ["id", "displayName", "photos", "email"],
+                    scope: ["email"],
+                },
+                async (accessToken, refreshToken, profile, done: any) => {
+                    console.log(profile);
+                    const user = await this.authServices.authenticateStrategy({
+                        id: profile.id,
+                        email: profile._json.email as string,
+                        name: profile._json.name as string,
+                        strategy: "FACEBOOK",
+                        accessToken,
+                        refreshToken,
+                    });
+                    done(null, profile);
+                }
+            )
+        );
+    };
     public readonly configLocalStrategy = () => {
         passport.use(
             new LocalStrategy(
