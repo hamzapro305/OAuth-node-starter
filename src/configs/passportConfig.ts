@@ -78,7 +78,8 @@ export default class PassportConfig {
             clientID: process.env.FACEBOOK_APP_ID as string,
             clientSecret: process.env.FACEBOOK_APP_SECRET as string,
             callbackURL: "http://localhost:8000/auth/facebook/redirect",
-            profileFields: ['id', 'displayName', 'photos', 'email']
+            profileFields: ['id', 'displayName', 'photos', 'email'],
+            scope:["email"]
           },
           async (accessToken, refreshToken, profile:any, done:any) => {
               console.log(profile);
