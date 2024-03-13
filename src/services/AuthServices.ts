@@ -169,7 +169,8 @@ class AuthServices {
                     false
                 );
             }
-            if (!user.local.password) {
+            const userPassword= await this.authRepository.getUserPassword(email);
+            if (!userPassword) {
                 return done(
                     new CustomError(
                         "You didn't signed up using email...",
@@ -178,7 +179,7 @@ class AuthServices {
                     false
                 );
             }
-            if (!bcrypt.compareSync(password, user.local.password)) {
+            if (!bcrypt.compareSync(password, userPassword)) {
                 return done(
                     new CustomError(
                         "Password incorrect",

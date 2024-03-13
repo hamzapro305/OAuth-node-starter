@@ -22,6 +22,7 @@ class UserRepository {
             return {
                 ...docSnapshot.docs[0].data(),
                 id: docSnapshot.docs[0].id,
+                local:{}
             };
         } catch (error: any) {
             throw new CustomError(

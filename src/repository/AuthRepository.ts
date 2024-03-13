@@ -193,5 +193,24 @@ class AuthRepository {
             );
         }
     }
+
+    
+    public async getUserPassword(email: string): Promise<string | null> {
+        try {
+            const docRef = this.db
+                .collection("users")
+                .where("email", "==", email);
+            const docSnapshot = await docRef.get();
+            if (!docSnapshot.docs[0].data().local.password) {
+                return null
+            }
+            return docSnapshot.docs[0].data().local.password
+        } catch (error: any) {
+            throw new CustomError(
+                (error?.message as string) || "Internal Server Error",
+                error?.httpCode || HttpStatusCode.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
 }
 export default AuthRepository;
