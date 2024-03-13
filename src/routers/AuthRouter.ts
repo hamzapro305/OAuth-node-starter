@@ -21,9 +21,7 @@ AuthRouter.get(
         scope: ["email", "profile"],
     })
 );
-AuthRouter.get(
-    "/facebook",
-    passport.authenticate('facebook'));
+AuthRouter.get("/facebook", passport.authenticate("facebook"));
 
 // Handle Callback from Google Authentication
 AuthRouter.get(
@@ -42,11 +40,8 @@ AuthRouter.get(
     }
 );
 // Handle Callback from Local Authentication
-AuthRouter.post(
-    "/local/redirect",
-    (req, res) => {
-        res.send("you reached the local redirect URI");
-    }
-);
+AuthRouter.post("/local/redirect", (req, res) => {
+    res.send("you reached the local redirect URI");
+});
 
 export { AuthRouter };

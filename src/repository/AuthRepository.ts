@@ -14,7 +14,7 @@ class AuthRepository {
         email,
         name,
         accessToken,
-        refreshToken
+        refreshToken,
     }: {
         googleID: string;
         email: string;
@@ -30,7 +30,7 @@ class AuthRepository {
                     google: {
                         id: googleID,
                         accessToken,
-                        refreshToken: refreshToken?refreshToken:null,
+                        refreshToken: refreshToken ? refreshToken : null,
                     },
                 },
             });
@@ -48,7 +48,7 @@ class AuthRepository {
         email,
         name,
         accessToken,
-        refreshToken
+        refreshToken,
     }: {
         facebookID: string;
         email: string;
@@ -64,7 +64,7 @@ class AuthRepository {
                     facebook: {
                         id: facebookID,
                         accessToken,
-                        refreshToken: refreshToken?refreshToken:null,
+                        refreshToken: refreshToken ? refreshToken : null,
                     },
                 },
             });
@@ -100,7 +100,7 @@ class AuthRepository {
                         google: {
                             id: googleId,
                             accessToken,
-                            refreshToken: refreshToken?refreshToken:null,
+                            refreshToken: refreshToken ? refreshToken : null,
                         },
                     },
                 });
@@ -135,7 +135,7 @@ class AuthRepository {
                         facebook: {
                             id: facebookID,
                             accessToken,
-                            refreshToken: refreshToken?refreshToken:null,
+                            refreshToken: refreshToken ? refreshToken : null,
                         },
                     },
                 });
@@ -171,27 +171,6 @@ class AuthRepository {
             );
         }
     };
-    public async getUserByEmail(email: string): Promise<any> {
-        try {
-            const docRef = this.db
-                .collection("users")
-                .where("email", "==", email);
-            const docSnapshot = await docRef.get();
-            if (docSnapshot.empty) {
-                // Handle case where no user found with the email
-                return null;
-            }
-            return {
-                ...docSnapshot.docs[0].data(),
-                id: docSnapshot.docs[0].id,
-            };
-        } catch (error: any) {
-            throw new CustomError(
-                (error?.message as string) || "Internal Server Error",
-                error?.httpCode || HttpStatusCode.INTERNAL_SERVER_ERROR
-            );
-        }
-    }
 
     public async createUser({
         email,
@@ -214,19 +193,5 @@ class AuthRepository {
             );
         }
     }
-
-    public readonly getUser = async () => {
-        try {
-            // const usersCol = collection(this.db, "user");
-            // const userSnapshot = await getDocs(usersCol);
-            // const userList = userSnapshot.docs.map((doc) => doc.data());
-            // return userList;
-        } catch (error: any) {
-            throw new CustomError(
-                (error?.message as string) || "Internal Server Error",
-                error?.httpCode || HttpStatusCode.INTERNAL_SERVER_ERROR
-            );
-        }
-    };
 }
 export default AuthRepository;

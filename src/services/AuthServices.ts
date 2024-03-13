@@ -1,6 +1,7 @@
 import { inject, singleton } from "tsyringe";
 import bcrypt from "bcryptjs";
 import AuthRepository from "../repository/AuthRepository";
+import UserServices from "./UserServices";
 import { CustomError } from "../exception/CustomError";
 import HttpStatusCode from "../utils/HttpStatusCode";
 import { IVerifyOptions } from "passport-local";
@@ -9,7 +10,10 @@ import { IVerifyOptions } from "passport-local";
 class AuthServices {
     constructor(
         @inject(AuthRepository)
-        private readonly authRepository: AuthRepository
+        private readonly authRepository: AuthRepository,
+
+        @inject(UserServices)
+        private readonly userServices: UserServices
     ) {}
     public readonly authenticateStrategy = async ({
         id,
@@ -28,8 +32,8 @@ class AuthServices {
     }) => {
         try {
             // login karte waqt yeh dekho k user ka strategy account exist krta ya nhi if user exists
-            const existingUser = await this.authRepository.getUserByEmail(
-                email
+            const existingUser = await this.userServices.getUserByEmail(
+                {email}
             );
             if (existingUser) {
                 switch (strategy) {
@@ -106,8 +110,8 @@ class AuthServices {
     }) => {
         try {
             // Signup krte waqt yeh dekho k user ka koi strategy id exist krta already tou ussi se connect krdo
-            const existingUser = await this.authRepository.getUserByEmail(
-                email
+            const existingUser = await this.userServices.getUserByEmail(
+                {email}
             );
             const salt = bcrypt.genSaltSync(10);
             const hashedPwd = bcrypt.hashSync(password, salt);
@@ -157,7 +161,7 @@ class AuthServices {
         ) => void
     ) => {
         try {
-            const user = await this.authRepository.getUserByEmail(email);
+            const user = await this.userServices.getUserByEmail({email});
 
             if (!user) {
                 return done(
