@@ -10,12 +10,12 @@ class AuthRepository {
         this.db = firebaseDB;
     }
     public readonly createGoogleUser = async ({
-        googleID,
+        googleId,
         email,
         name,
         profilePic,
     }: {
-        googleID: string;
+        googleId: string;
         email: string;
         name: string;
         profilePic: string;
@@ -23,7 +23,7 @@ class AuthRepository {
         try {
             const user = this.db
                 .collection("users")
-                .add({ email, name, profilePic, googleID });
+                .add({ email, name, profilePic, googleId });
 
             return user;
         } catch (error: any) {
@@ -34,12 +34,12 @@ class AuthRepository {
         }
     };
     public readonly connectToGoogle = async ({
-        googleID,
+        googleId,
         documentId,
         name,
         profilePic,
     }: {
-        googleID: string;
+        googleId: string;
         documentId: string;
         name: string;
         profilePic: string;
@@ -48,7 +48,7 @@ class AuthRepository {
             const user = await this.db
                 .collection("users")
                 .doc(documentId)
-                .update({ name, profilePic, googleID });
+                .update({ name, profilePic, googleId });
             return user;
         } catch (error: any) {
             throw new CustomError(
@@ -58,12 +58,12 @@ class AuthRepository {
         }
     };
     public readonly connectToFacebook = async ({
-        facebookID,
+        facebookId,
         documentId,
         name,
         profilePic,
     }: {
-        facebookID: string;
+        facebookId: string;
         documentId: string;
         name: string;
         profilePic: string;
@@ -72,7 +72,7 @@ class AuthRepository {
             const user = await this.db
                 .collection("users")
                 .doc(documentId)
-                .update({ name, profilePic, facebookID });
+                .update({ name, profilePic, facebookId });
             return user;
         } catch (error: any) {
             throw new CustomError(
