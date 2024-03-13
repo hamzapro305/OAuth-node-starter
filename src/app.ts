@@ -20,7 +20,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Config
-const passportConfig = container.resolve(PassportConfig);
+container.resolve(PassportConfig);
 
 // Routers
 app.use("/test/", TestRouter);
@@ -29,9 +29,7 @@ app.use("/auth/", AuthRouter);
 // Handle Error After Controller
 app.use(ErrorMiddleware);
 
-
 // Run application
 app.listen(PORT, () => {
     console.log("listening to port ", PORT);
 });
-

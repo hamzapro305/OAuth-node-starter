@@ -32,22 +32,22 @@ class AuthServices {
             if (existingUser) {
                 switch (strategy) {
                     case "GOOGLE":
-                        if (!existingUser.googleID) {
+                        if (!existingUser.googleId) {
                             // If user is not connected with google, connect him to google
                             await this.authRepository.connectToGoogle({
                                 documentId: existingUser.id,
-                                googleID: id,
+                                googleId: id,
                                 name,
                                 profilePic,
                             });
                         }
                         break;
                     case "FACEBOOK":
-                        if (!existingUser.facebookID) {
+                        if (!existingUser.facebookId) {
                             // If user is not connected with facebook, connect him to facebook
                             await this.authRepository.connectToFacebook({
                                 documentId: existingUser.id,
-                                facebookID: id,
+                                facebookId: id,
                                 name,
                                 profilePic,
                             });
@@ -64,7 +64,7 @@ class AuthServices {
                 case "GOOGLE":
                     newUser = await this.authRepository.createGoogleUser({
                         email,
-                        googleID: id,
+                        googleId: id,
                         name,
                         profilePic,
                     });
@@ -72,7 +72,7 @@ class AuthServices {
                 case "FACEBOOK":
                     newUser = await this.authRepository.createGoogleUser({
                         email,
-                        googleID: id,
+                        googleId: id,
                         name,
                         profilePic,
                     });
@@ -113,7 +113,7 @@ class AuthServices {
                 return "User Successfully Added...";
             }
 
-            if (existingUser.googleID || existingUser.facebookID) {
+            if (existingUser.googleId || existingUser.facebookId) {
                 // If User has previously signed up using a strategy then connect that to his local account.
                 await this.authRepository.connectLocalAccount({
                     documentId: existingUser.id,
