@@ -15,13 +15,11 @@ class AuthServices {
         id,
         email,
         name,
-        profilePic,
         strategy,
     }: {
         id: string;
         email: string;
         name: string;
-        profilePic: string;
         strategy: "GOOGLE" | "FACEBOOK";
     }) => {
         try {
@@ -37,8 +35,7 @@ class AuthServices {
                             await this.authRepository.connectToGoogle({
                                 documentId: existingUser.id,
                                 googleId: id,
-                                name,
-                                profilePic,
+                                strategies:existingUser.strategies,
                             });
                         }
                         break;
@@ -47,9 +44,8 @@ class AuthServices {
                             // If user is not connected with facebook, connect him to facebook
                             await this.authRepository.connectToFacebook({
                                 documentId: existingUser.id,
-                                facebookId: id,
-                                name,
-                                profilePic,
+                                facebookID: id,
+                                strategies:existingUser.strategies,
                             });
                         }
                         break;
@@ -64,17 +60,15 @@ class AuthServices {
                 case "GOOGLE":
                     newUser = await this.authRepository.createGoogleUser({
                         email,
-                        googleId: id,
+                        googleID: id,
                         name,
-                        profilePic,
                     });
                     break;
                 case "FACEBOOK":
-                    newUser = await this.authRepository.createGoogleUser({
+                    newUser = await this.authRepository.createFacebookUser({
                         email,
-                        googleId: id,
+                        facebookID: id,
                         name,
-                        profilePic,
                     });
                     break;
 
@@ -91,9 +85,11 @@ class AuthServices {
     };
     public readonly signUp = async ({
         email,
+        name,
         password,
     }: {
         email: string;
+        name: string;
         password: string;
     }) => {
         try {
@@ -108,12 +104,13 @@ class AuthServices {
                 // If user does not exist make then simply create a new user using local signup
                 await this.authRepository.createUser({
                     email,
+                    name,
                     password: hashedPwd,
                 });
                 return "User Successfully Added...";
             }
 
-            if (existingUser.googleId || existingUser.facebookId) {
+            if (existingUser.strategies) {
                 // If User has previously signed up using a strategy then connect that to his local account.
                 await this.authRepository.connectLocalAccount({
                     documentId: existingUser.id,
@@ -156,7 +153,7 @@ class AuthServices {
                     false
                 );
             }
-            if (!user.password) {
+            if (!user.local.password) {
                 return done(
                     new CustomError(
                         "You didn't signed up using email...",
@@ -165,7 +162,7 @@ class AuthServices {
                     false
                 );
             }
-            if (!bcrypt.compareSync(password, user.password)) {
+            if (!bcrypt.compareSync(password, user.local.password)) {
                 return done(
                     new CustomError(
                         "Password incorrect",

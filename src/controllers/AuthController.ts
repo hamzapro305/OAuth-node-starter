@@ -14,9 +14,9 @@ class AuthController {
         next: NextFunction
     ) => {
         try {
-            const { email, password } = req.body;
+            const { email,name, password } = req.body;
 
-            const status=await this.authServices.signUp({ email, password });
+            const status=await this.authServices.signUp({ email,name, password });
             res.status(200).send(status);
         } catch (error) {
             next(error);

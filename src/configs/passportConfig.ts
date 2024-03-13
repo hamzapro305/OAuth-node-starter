@@ -65,7 +65,6 @@ export default class PassportConfig {
                         id: profile.id,
                         email: profile._json.email as string,
                         name: profile._json.name as string,
-                        profilePic: profile._json.picture as string,
                         strategy: "GOOGLE",
                     });
                     done(null, user);
@@ -81,15 +80,14 @@ export default class PassportConfig {
             profileFields: ['id', 'displayName', 'photos', 'email'],
             scope:["email"]
           },
-          async (accessToken, refreshToken, profile:any, done:any) => {
+          async (accessToken, refreshToken, profile, done:any) => {
               console.log(profile);
-            //   const user = await this.authServices.authenticateStrategy({
-            //       id: profile.id,
-            //       email: profile._json.email as string,
-            //       name: profile._json.name as string,
-            //       profilePic: profile._json.picture as string,
-            //       strategy: "FACEBOOK",
-            //   });
+              const user = await this.authServices.authenticateStrategy({
+                  id: profile.id,
+                  email: profile._json.email as string,
+                  name: profile._json.name as string,
+                  strategy: "FACEBOOK",
+              });
               done(null,profile);
           }
         ));
