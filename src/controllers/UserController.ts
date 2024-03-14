@@ -22,5 +22,19 @@ class UserController {
             next(error);
         }
     };
+
+    public readonly getUserProfile = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ) => {
+        try {
+            const { googleAccessToken } = req.body;
+            const profile = await this.userServices.getUserProfile({ googleAccessToken });
+            res.status(200).send(profile);
+        } catch (error) {
+            next(error);
+        }
+    };
 }
 export default UserController;

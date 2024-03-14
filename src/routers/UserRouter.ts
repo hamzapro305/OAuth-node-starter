@@ -7,5 +7,6 @@ const userController = container.resolve(UserController);
 
 
 UserRouter.get("/:email",userController.getUserByEmail)
+UserRouter.post("/profile",userController.getUserProfile)
 
 export {UserRouter}

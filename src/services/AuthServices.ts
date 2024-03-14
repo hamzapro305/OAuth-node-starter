@@ -32,9 +32,9 @@ class AuthServices {
     }) => {
         try {
             // login karte waqt yeh dekho k user ka strategy account exist krta ya nhi if user exists
-            const existingUser = await this.userServices.getUserByEmail(
-                {email}
-            );
+            const existingUser = await this.userServices.getUserByEmail({
+                email,
+            });
             if (existingUser) {
                 switch (strategy) {
                     case "GOOGLE":
@@ -45,7 +45,7 @@ class AuthServices {
                                 googleId: id,
                                 strategies: existingUser.strategies,
                                 accessToken,
-                                refreshToken
+                                refreshToken,
                             });
                         }
                         break;
@@ -57,7 +57,7 @@ class AuthServices {
                                 facebookID: id,
                                 strategies: existingUser.strategies,
                                 accessToken,
-                                refreshToken
+                                refreshToken,
                             });
                         }
                         break;
@@ -75,7 +75,7 @@ class AuthServices {
                         googleID: id,
                         name,
                         accessToken,
-                        refreshToken
+                        refreshToken,
                     });
                     break;
                 case "FACEBOOK":
@@ -84,7 +84,7 @@ class AuthServices {
                         facebookID: id,
                         name,
                         accessToken,
-                        refreshToken
+                        refreshToken,
                     });
                     break;
 
@@ -110,9 +110,9 @@ class AuthServices {
     }) => {
         try {
             // Signup krte waqt yeh dekho k user ka koi strategy id exist krta already tou ussi se connect krdo
-            const existingUser = await this.userServices.getUserByEmail(
-                {email}
-            );
+            const existingUser = await this.userServices.getUserByEmail({
+                email,
+            });
             const salt = bcrypt.genSaltSync(10);
             const hashedPwd = bcrypt.hashSync(password, salt);
 
@@ -161,7 +161,7 @@ class AuthServices {
         ) => void
     ) => {
         try {
-            const user = await this.userServices.getUserByEmail({email});
+            const user = await this.userServices.getUserByEmail({ email });
 
             if (!user) {
                 return done(
@@ -169,7 +169,9 @@ class AuthServices {
                     false
                 );
             }
-            const userPassword= await this.authRepository.getUserPassword(email);
+            const userPassword = await this.authRepository.getUserPassword(
+                email
+            );
             if (!userPassword) {
                 return done(
                     new CustomError(
@@ -196,5 +198,6 @@ class AuthServices {
             );
         }
     };
+
 }
 export default AuthServices;
