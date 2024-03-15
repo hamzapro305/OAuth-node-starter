@@ -1,41 +1,40 @@
 import { singleton } from "tsyringe";
-import {
-    getFirestore,
-    collection,
-    getDocs,
-    Firestore,
-    addDoc,
-    query,
-    where,
-} from "firebase/firestore/lite";
-import { firebaseApp } from "../configs/firebaseConfig";
+import { firebaseDB } from "../configs/firebaseConfig";
 import { CustomError } from "../exception/CustomError";
 import HttpStatusCode from "../utils/HttpStatusCode";
 
 @singleton()
 class AuthRepository {
-    private db: Firestore;
+    private db: typeof firebaseDB;
     constructor() {
-        this.db = getFirestore(firebaseApp);
+        this.db = firebaseDB;
     }
     public readonly createGoogleUser = async ({
         googleID,
         email,
         name,
-        profilePic,
+        accessToken,
+        refreshToken,
     }: {
         googleID: string;
         email: string;
         name: string;
-        profilePic: string;
+        accessToken: string;
+        refreshToken?: string;
     }) => {
         try {
-            const user = await addDoc(collection(this.db, "user"), {
+            const user = this.db.collection("users").add({
                 email,
                 name,
-                googleID,
-                profilePic,
+                strategies: {
+                    google: {
+                        id: googleID,
+                        accessToken,
+                        refreshToken: refreshToken ? refreshToken : null,
+                    },
+                },
             });
+
             return user;
         } catch (error: any) {
             throw new CustomError(
@@ -44,54 +43,33 @@ class AuthRepository {
             );
         }
     };
-    public async getUserByEmail(email: string) {
-        try {
-            const usersCol = collection(this.db, "user");
-            // Query for the user with the specified email
-            const querySnapshot = await getDocs(
-                query(usersCol, where("email", "==", email))
-            );
-            // Check if any user matches the query
-            if (querySnapshot.size > 0) {
-                // Return the first matching user (assuming unique emails)
-                return querySnapshot.docs[0].data();
-            } else {
-                // No user found with the specified email
-                return null;
-            }
-        } catch (error: any) {
-            throw new CustomError(
-                (error?.message as string) || "Internal Server Error",
-                error?.httpCode || HttpStatusCode.INTERNAL_SERVER_ERROR
-            );
-        }
-    }
-
-    public async createUser({
+    public readonly createFacebookUser = async ({
+        facebookID,
         email,
-        password,
+        name,
+        accessToken,
+        refreshToken,
     }: {
+        facebookID: string;
         email: string;
-        password: string;
-    }){
+        name: string;
+        accessToken: string;
+        refreshToken?: string;
+    }) => {
         try {
-            const usersCol = collection(this.db, "user");
-            await addDoc(usersCol, { email, password });
-            return;
-        } catch (error: any) {
-            throw new CustomError(
-                (error?.message as string) || "Internal Server Error",
-                error?.httpCode || HttpStatusCode.INTERNAL_SERVER_ERROR
-            );
-        }
-    }
+            const user = this.db.collection("users").add({
+                email,
+                name,
+                strategies: {
+                    facebook: {
+                        id: facebookID,
+                        accessToken,
+                        refreshToken: refreshToken ? refreshToken : null,
+                    },
+                },
+            });
 
-    public readonly getUser = async () => {
-        try {
-            const usersCol = collection(this.db, "user");
-            const userSnapshot = await getDocs(usersCol);
-            const userList = userSnapshot.docs.map((doc) => doc.data());
-            return userList;
+            return user;
         } catch (error: any) {
             throw new CustomError(
                 (error?.message as string) || "Internal Server Error",
@@ -99,5 +77,141 @@ class AuthRepository {
             );
         }
     };
+    public readonly connectToGoogle = async ({
+        googleId,
+        documentId,
+        strategies,
+        accessToken,
+        refreshToken,
+    }: {
+        googleId: string;
+        documentId: string;
+        strategies: any;
+        accessToken: string;
+        refreshToken?: string;
+    }) => {
+        try {
+            const user = await this.db
+                .collection("users")
+                .doc(documentId)
+                .update({
+                    strategies: {
+                        ...strategies,
+                        google: {
+                            id: googleId,
+                            accessToken,
+                            refreshToken: refreshToken ? refreshToken : null,
+                        },
+                    },
+                });
+            return user;
+        } catch (error: any) {
+            throw new CustomError(
+                (error?.message as string) || "Internal Server Error",
+                error?.httpCode || HttpStatusCode.INTERNAL_SERVER_ERROR
+            );
+        }
+    };
+    public readonly connectToFacebook = async ({
+        facebookID,
+        documentId,
+        strategies,
+        accessToken,
+        refreshToken,
+    }: {
+        facebookID: string;
+        documentId: string;
+        strategies: any;
+        accessToken: string;
+        refreshToken?: string;
+    }) => {
+        try {
+            const user = await this.db
+                .collection("users")
+                .doc(documentId)
+                .update({
+                    strategies: {
+                        ...strategies,
+                        facebook: {
+                            id: facebookID,
+                            accessToken,
+                            refreshToken: refreshToken ? refreshToken : null,
+                        },
+                    },
+                });
+            return user;
+        } catch (error: any) {
+            throw new CustomError(
+                (error?.message as string) || "Internal Server Error",
+                error?.httpCode || HttpStatusCode.INTERNAL_SERVER_ERROR
+            );
+        }
+    };
+    public readonly connectLocalAccount = async ({
+        documentId,
+        password,
+    }: {
+        documentId: string;
+        password: string;
+    }) => {
+        try {
+            const user = await this.db
+                .collection("users")
+                .doc(documentId)
+                .update({
+                    local: {
+                        password,
+                    },
+                });
+            return user;
+        } catch (error: any) {
+            throw new CustomError(
+                (error?.message as string) || "Internal Server Error",
+                error?.httpCode || HttpStatusCode.INTERNAL_SERVER_ERROR
+            );
+        }
+    };
+
+    public async createUser({
+        email,
+        name,
+        password,
+    }: {
+        email: string;
+        name: string;
+        password: string;
+    }) {
+        try {
+            const doc = await this.db
+                .collection("users")
+                .add({ email, name, local: { password } });
+            return doc;
+        } catch (error: any) {
+            throw new CustomError(
+                (error?.message as string) || "Internal Server Error",
+                error?.httpCode || HttpStatusCode.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    
+    public async getUserPassword(email: string): Promise<string | null> {
+        try {
+            const docRef = this.db
+                .collection("users")
+                .where("email", "==", email);
+            const docSnapshot = await docRef.get();
+            if (!docSnapshot.docs[0].data().local.password) {
+                return null
+            }
+            return docSnapshot.docs[0].data().local.password
+        } catch (error: any) {
+            throw new CustomError(
+                (error?.message as string) || "Internal Server Error",
+                error?.httpCode || HttpStatusCode.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
 }
 export default AuthRepository;

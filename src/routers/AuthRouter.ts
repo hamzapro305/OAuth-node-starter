@@ -7,13 +7,12 @@ const AuthRouter = Router();
 
 const authController = container.resolve(AuthController);
 
-AuthRouter.post("/get-users", authController.getUser);
 AuthRouter.post("/signup", authController.signup);
 AuthRouter.post(
     "/login",
     passport.authenticate("local", { failureRedirect: "/login" }),
     function (req, res) {
-        res.redirect("/local/redirect");
+        res.redirect("/auth/local/redirect");
     }
 );
 AuthRouter.get(
@@ -22,6 +21,7 @@ AuthRouter.get(
         scope: ["email", "profile"],
     })
 );
+AuthRouter.get("/facebook", passport.authenticate("facebook"));
 
 // Handle Callback from Google Authentication
 AuthRouter.get(
@@ -31,5 +31,17 @@ AuthRouter.get(
         res.send("you reached the redirect URI");
     }
 );
+// Handle Callback from Facebook Authentication
+AuthRouter.get(
+    "/facebook/redirect",
+    passport.authenticate("facebook"),
+    (req, res) => {
+        res.send("you reached the redirect URI");
+    }
+);
+// Handle Callback from Local Authentication
+AuthRouter.post("/local/redirect", (req, res) => {
+    res.send("you reached the local redirect URI");
+});
 
 export { AuthRouter };

@@ -8,28 +8,16 @@ class AuthController {
         @inject(AuthServices)
         private authServices: AuthServices
     ) {}
-    public readonly getUser = async (
-        req: Request,
-        res: Response,
-        next: NextFunction
-    ) => {
-        try {
-            const users = await this.authServices.getUser();
-            res.status(200).json(users);
-        } catch (error) {
-            next(error);
-        }
-    };
     public readonly signup = async (
         req: Request,
         res: Response,
         next: NextFunction
     ) => {
         try {
-            const { email, password } = req.body;
+            const { email,name, password } = req.body;
 
-            await this.authServices.signUp({ email, password });
-            res.status(200).send("User Successfully Added...");
+            const status=await this.authServices.signUp({ email,name, password });
+            res.status(200).send(status);
         } catch (error) {
             next(error);
         }
