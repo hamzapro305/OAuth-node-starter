@@ -23,12 +23,16 @@ AuthRouter.get(
 );
 AuthRouter.get("/facebook", passport.authenticate("facebook"));
 
+
+// Test Routes
+AuthRouter.post("/verify/access-token",authController.verifyAccessToken)
+
 // Handle Callback from Google Authentication
 AuthRouter.get(
     "/google/redirect",
     passport.authenticate("google"),
     (req, res) => {
-        res.send("you reached the redirect URI");
+        res.json(req.user);
     }
 );
 // Handle Callback from Facebook Authentication
