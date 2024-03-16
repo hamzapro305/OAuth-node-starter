@@ -85,7 +85,7 @@ export default class PassportConfig {
                     scope: ["email"],
                 },
                 async (accessToken, refreshToken, profile, done: any) => {
-                    console.log(profile);
+                    console.log(accessToken);
                     const user = await this.authServices.authenticateStrategy({
                         id: profile.id,
                         email: profile._json.email as string,

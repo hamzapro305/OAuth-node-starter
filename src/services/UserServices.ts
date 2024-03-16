@@ -35,8 +35,10 @@ class UserServices {
 
     public readonly getUserProfile = async ({
         googleAccessToken,
+        facebookAccessToken
     }: {
         googleAccessToken?: string;
+        facebookAccessToken?: string;
     }) => {
         try {
             if (googleAccessToken) {
@@ -45,6 +47,14 @@ class UserServices {
                 });
                 const profile=await this.getUserByEmail({email:user.data.email})
                 return {...user.data,profile};
+            }
+            else if(facebookAccessToken){
+                const user = await this.authServices.getFacebookProfile({
+                    accessToken: facebookAccessToken,
+                });
+                const profile=await this.getUserByEmail({email:user.email})
+                return {...user.data,profile};
+
             }
         } catch (error: any) {
             throw new CustomError(

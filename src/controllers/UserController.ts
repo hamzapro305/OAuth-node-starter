@@ -29,8 +29,8 @@ class UserController {
         next: NextFunction
     ) => {
         try {
-            const { googleAccessToken } = req.body;
-            const profile = await this.userServices.getUserProfile({ googleAccessToken });
+            const { googleAccessToken,facebookAccessToken } = req.body;
+            const profile = await this.userServices.getUserProfile({ googleAccessToken,facebookAccessToken });
             res.status(200).send(profile);
         } catch (error) {
             next(error);

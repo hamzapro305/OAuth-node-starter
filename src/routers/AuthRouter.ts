@@ -40,7 +40,7 @@ AuthRouter.get(
     "/facebook/redirect",
     passport.authenticate("facebook"),
     (req, res) => {
-        res.send("you reached the redirect URI");
+        res.json(req.user);
     }
 );
 // Handle Callback from Local Authentication

@@ -5,7 +5,7 @@ import UserServices from "./UserServices";
 import { CustomError } from "../exception/CustomError";
 import HttpStatusCode from "../utils/HttpStatusCode";
 import { IVerifyOptions } from "passport-local";
-import https from 'https';
+import https from "https";
 import axios, { AxiosError } from "axios";
 
 @singleton()
@@ -93,7 +93,7 @@ class AuthServices {
                 default:
                     break;
             }
-            return {...newUser,accessToken};
+            return { ...newUser, accessToken };
         } catch (error: any) {
             throw new CustomError(
                 (error?.message as string) || "Internal Server Error",
@@ -201,45 +201,62 @@ class AuthServices {
         }
     };
 
-    public readonly verifyAccessToken=async(accessToken:string)=>{
-        type TokenResponse ={
+    public readonly verifyAccessToken = async (accessToken: string) => {
+        type TokenResponse = {
             aud: string;
             sub: string;
             error?: string;
-          }
+        };
         try {
             const url = `https://oauth2.googleapis.com/tokeninfo?id_token=${accessToken}`;
-            const response = await new Promise<TokenResponse>((resolve, reject) => {
-                https.get(url, (res) => {
-                  let data = '';
-                  res.on('data', (chunk) => {
-                    data += chunk;
-                  });
-                  res.on('end', () => {
-                    try {
-                      const parsedResponse = JSON.parse(data) as TokenResponse;
-                      resolve(parsedResponse);
-                    } catch (error) {
-                      reject(new Error('Failed to parse token response'));
-                    }
-                  });
-                }).on('error', (error) => {
-                  reject(new Error('Network error during token verification'));
-                });
-              });
-          
-              if (response.aud === process.env.GOOGLE_CLIENT_ID && !response.error) {
+            const response = await new Promise<TokenResponse>(
+                (resolve, reject) => {
+                    https
+                        .get(url, (res) => {
+                            let data = "";
+                            res.on("data", (chunk) => {
+                                data += chunk;
+                            });
+                            res.on("end", () => {
+                                try {
+                                    const parsedResponse = JSON.parse(
+                                        data
+                                    ) as TokenResponse;
+                                    resolve(parsedResponse);
+                                } catch (error) {
+                                    reject(
+                                        new Error(
+                                            "Failed to parse token response"
+                                        )
+                                    );
+                                }
+                            });
+                        })
+                        .on("error", (error) => {
+                            reject(
+                                new Error(
+                                    "Network error during token verification"
+                                )
+                            );
+                        });
+                }
+            );
+
+            if (
+                response.aud === process.env.GOOGLE_CLIENT_ID &&
+                !response.error
+            ) {
                 return { userId: response.sub };
-              } else {
-                throw new Error('Invalid access token');
-              }
+            } else {
+                throw new Error("Invalid access token");
+            }
         } catch (error: any) {
             throw new CustomError(
                 (error?.message as string) || "Internal Server Error",
                 error?.httpCode || HttpStatusCode.INTERNAL_SERVER_ERROR
             );
         }
-    }
+    };
 
     public readonly getGoogleProfile = async ({
         accessToken,
@@ -281,6 +298,31 @@ class AuthServices {
             }
         }
     };
-
+    public readonly getFacebookProfile = async ({
+        accessToken,
+    }: {
+        accessToken: string;
+    }) => {
+        try {
+            const response = await axios.get(
+                `https://graph.facebook.com/me?fields=id,name,email&access_token=${accessToken}`
+            );
+            console.log(response.data)
+            return response.data;
+        } catch (error: any) {
+            if (error instanceof AxiosError) {
+                throw new CustomError(
+                    error.response?.data.message,
+                    HttpStatusCode.INTERNAL_SERVER_ERROR
+                );
+            } else {
+                // console.log(error);
+                throw new CustomError(
+                    (error?.message as string) || "Internal Server Error",
+                    error?.httpCode || HttpStatusCode.INTERNAL_SERVER_ERROR
+                );
+            }
+        }
+    };
 }
 export default AuthServices;
