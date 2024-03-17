@@ -12,7 +12,7 @@ AuthRouter.post(
     "/login",
     passport.authenticate("local", { failureRedirect: "/login" }),
     function (req, res) {
-        res.redirect("/auth/local/redirect");
+        res.json(req.user);
     }
 );
 AuthRouter.get(
@@ -43,9 +43,5 @@ AuthRouter.get(
         res.json(req.user);
     }
 );
-// Handle Callback from Local Authentication
-AuthRouter.post("/local/redirect", (req, res) => {
-    res.send("you reached the local redirect URI");
-});
 
 export { AuthRouter };

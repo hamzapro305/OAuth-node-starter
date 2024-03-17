@@ -192,7 +192,8 @@ class AuthServices {
                     false
                 );
             }
-            return done(null, user);
+            console.log(user)
+            return done(null,user);
         } catch (error: any) {
             throw new CustomError(
                 (error?.message as string) || "Internal Server Error",
