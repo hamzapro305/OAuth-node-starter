@@ -60,7 +60,7 @@ export default class PassportConfig {
                     callbackURL: "/auth/google/redirect",
                 },
                 async (accessToken, refreshToken, profile, done) => {
-                    console.log(profile);
+                    console.log(accessToken);
                     const user = await this.authServices.authenticateStrategy({
                         id: profile.id,
                         email: profile._json.email as string,
@@ -69,7 +69,7 @@ export default class PassportConfig {
                         accessToken,
                         refreshToken,
                     });
-                    done(null, user);
+                    done(null, {...user,accessToken});
                 }
             )
         );
@@ -85,7 +85,7 @@ export default class PassportConfig {
                     scope: ["email"],
                 },
                 async (accessToken, refreshToken, profile, done: any) => {
-                    console.log(profile);
+                    console.log(accessToken);
                     const user = await this.authServices.authenticateStrategy({
                         id: profile.id,
                         email: profile._json.email as string,

@@ -201,7 +201,7 @@ class AuthRepository {
                 .collection("users")
                 .where("email", "==", email);
             const docSnapshot = await docRef.get();
-            if (!docSnapshot.docs[0].data().local.password) {
+            if (!docSnapshot.docs[0].data().local) {
                 return null
             }
             return docSnapshot.docs[0].data().local.password

@@ -22,5 +22,19 @@ class AuthController {
             next(error);
         }
     };
+    public readonly verifyAccessToken = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ) => {
+        try {
+            const { accessToken } = req.body;
+
+            const status=await this.authServices.verifyAccessToken(accessToken);
+            res.status(200).send(status);
+        } catch (error) {
+            next(error);
+        }
+    };
 }
 export default AuthController;
