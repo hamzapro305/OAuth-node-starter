@@ -34,7 +34,9 @@ export default class PassportConfig {
     }
     public readonly configSerializeUser = () => {
         passport.serializeUser(function (user: any, cb) {
+            console.log('start');
             process.nextTick(function () {
+                console.log("Next tick Called")
                 cb(null, {
                     id: user.id,
                     name: user.name,
@@ -69,7 +71,7 @@ export default class PassportConfig {
                         accessToken,
                         refreshToken,
                     });
-                    done(null, {...user,accessToken});
+                    done(null, user);
                 }
             )
         );

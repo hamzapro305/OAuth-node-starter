@@ -1,12 +1,16 @@
 import { container, inject, singleton } from "tsyringe";
 import AuthServices from "../services/AuthServices";
 import { NextFunction, Request, Response } from "express";
+import JWT_Utils from "../utils/JWT_Utils";
 
 @singleton()
 class AuthController {
     constructor(
         @inject(AuthServices)
-        private authServices: AuthServices
+        private authServices: AuthServices,
+
+        @inject(JWT_Utils)
+        private jwtUtils:JWT_Utils
     ) {}
     public readonly signup = async (
         req: Request,
@@ -22,6 +26,21 @@ class AuthController {
             next(error);
         }
     };
+    public readonly fetchUserDetails = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ) => {
+        try {
+            console.log("fetching user details...")
+            const accessToken=this.jwtUtils.extractToken(req)
+            const user=this.jwtUtils.verifyToken(accessToken)
+            res.status(200).send(user);
+        } catch (error) {
+            next(error);
+        }
+    };
+
     public readonly verifyAccessToken = async (
         req: Request,
         res: Response,
