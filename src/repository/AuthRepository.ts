@@ -112,6 +112,62 @@ class AuthRepository {
             );
         }
     };
+    public readonly updateAccessToken = async ({
+        id,
+        documentId,
+        strategy,
+        strategies,
+        accessToken,
+    }: {
+        id: string;
+        documentId: string;
+        strategy: "GOOGLE" | "FACEBOOK";
+        strategies:any
+        accessToken: string;
+    }) => {
+        try {
+            switch (strategy) {
+                case "GOOGLE":
+                    await this.db
+                        .collection("users")
+                        .doc(documentId)
+                        .update({
+                            strategies: {
+                                ...strategies,
+                                google: {
+                                    id,
+                                    accessToken,
+                                },
+                            },
+                        });
+                    break;
+                case "FACEBOOK":
+                    await this.db
+                        .collection("users")
+                        .doc(documentId)
+                        .update({
+                            strategies: {
+                                ...strategies,
+                                facebook: {
+                                    id,
+                                    accessToken,
+                                },
+                            },
+                        });
+                    break;
+
+                default:
+                    break;
+            }
+
+            return 
+        } catch (error: any) {
+            throw new CustomError(
+                (error?.message as string) || "Internal Server Error",
+                error?.httpCode || HttpStatusCode.INTERNAL_SERVER_ERROR
+            );
+        }
+    };
     public readonly connectToFacebook = async ({
         facebookID,
         documentId,
@@ -194,7 +250,6 @@ class AuthRepository {
         }
     }
 
-    
     public async getUserPassword(email: string): Promise<string | null> {
         try {
             const docRef = this.db
@@ -202,9 +257,9 @@ class AuthRepository {
                 .where("email", "==", email);
             const docSnapshot = await docRef.get();
             if (!docSnapshot.docs[0].data().local) {
-                return null
+                return null;
             }
-            return docSnapshot.docs[0].data().local.password
+            return docSnapshot.docs[0].data().local.password;
         } catch (error: any) {
             throw new CustomError(
                 (error?.message as string) || "Internal Server Error",
@@ -212,6 +267,5 @@ class AuthRepository {
             );
         }
     }
-
 }
 export default AuthRepository;

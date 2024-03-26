@@ -20,8 +20,8 @@ class AuthController {
         try {
             const { email,name, password } = req.body;
 
-            const status=await this.authServices.signUp({ email,name, password });
-            res.status(200).send(status);
+            const user=await this.authServices.signUp({ email,name, password });
+            res.status(200).json(user);
         } catch (error) {
             next(error);
         }

@@ -31,6 +31,28 @@ class UserRepository {
             );
         }
     }
+    public async getUserById(id: string): Promise<any> {
+        try {
+            console.log(id)
+            const docRef = this.db
+                .collection("users")
+                .doc(id);
+            const docSnapshot = await docRef.get();
+            if (!docSnapshot.exists) {
+                // Handle case where no user found with the email
+                return null;
+            }
+            return {
+                ...docSnapshot.data(),
+                local:{}
+            };
+        } catch (error: any) {
+            throw new CustomError(
+                (error?.message as string) || "Internal Server Error",
+                error?.httpCode || HttpStatusCode.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
     public readonly getUser = async () => {
         try {
             // const usersCol = collection(this.db, "user");

@@ -32,6 +32,20 @@ class UserServices {
             );
         }
     };
+    public readonly getUserById = async ({ id }: { id: string }) => {
+        try {
+            const user = await this.userRepository.getUserById(id);
+            if (!user) {
+                return null;
+            }
+            return user;
+        } catch (error: any) {
+            throw new CustomError(
+                (error?.message as string) || "Internal Server Error",
+                error?.httpCode || HttpStatusCode.INTERNAL_SERVER_ERROR
+            );
+        }
+    };
 
     public readonly getUserProfile = async ({
         googleAccessToken,

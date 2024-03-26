@@ -49,6 +49,9 @@ class AuthServices {
                                 accessToken,
                                 refreshToken,
                             });
+                        }else{
+                            // Update access token
+                            await this.authRepository.updateAccessToken({accessToken,documentId:existingUser.id,id,strategies:existingUser.strategies,strategy:"GOOGLE"})
                         }
                         break;
                     case "FACEBOOK":
@@ -61,6 +64,9 @@ class AuthServices {
                                 accessToken,
                                 refreshToken,
                             });
+                        }else{
+                            // Update access token
+                            await this.authRepository.updateAccessToken({accessToken,documentId:existingUser.id,id,strategies:existingUser.strategies,strategy:"FACEBOOK"})
                         }
                         break;
 
@@ -120,12 +126,13 @@ class AuthServices {
 
             if (!existingUser) {
                 // If user does not exist make then simply create a new user using local signup
-                await this.authRepository.createUser({
+                const doc=await this.authRepository.createUser({
                     email,
                     name,
                     password: hashedPwd,
                 });
-                return "User Successfully Added...";
+                const user=await this.userServices.getUserById({id:(doc as any)._path.segments[1]})
+                return user;
             }
 
             if (existingUser.strategies) {
